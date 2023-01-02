@@ -5,6 +5,7 @@ const userController = require('../controllers/user')
 router.get('/notes/getNote', userController.getNote)
 router.get('/notes/newNote', userController.newNote)
 router.post('/notes/createNote', userController.createNote)
+router.get('/getUsers', userController.getUsers)
 
 
 module.exports = router
