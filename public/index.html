@@ -8,9 +8,10 @@
 </head>
 <body>
     <h1>You did it!</h1>
-    <form action="/auth/login" method="POST">
+    <form action="/user/createUser" method="POST">
+        <input type="text" name="name">
         <input type="text" name="email">
-        <input type="text" name="password">
+        <input type="text" name="pass">
         <button type="submit">Login</button>
     </form>
     <a href="user/getUsers">Click me</a>

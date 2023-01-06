@@ -1,4 +1,4 @@
-const pool = require('../config/queries')
+const User = require('../models/User')
 
 module.exports = {
     getNote: (req,res) => {
@@ -10,12 +10,30 @@ module.exports = {
     createNote: (req,res) => {
         res.send('index.html')
     },
-    getUsers: (req,res) => {
-        pool.query('SELECT * FROM users ORDER BY id ASC', (error, results) => {
-            if (error) {
-              throw error
-            }
-            res.status(200).json(results.rows)
-          })
+    getUsers: async(req,res) => {
+        try{
+            console.log(req)
+            const data = await User.findAll()
+            res.json(data)
+        }
+        catch(err){
+            console.log(err)
+        }
+    },
+    createUser: async(req,res) => {
+        try{
+            console.log(req.body)
+            const user = await User.create({
+                username: req.body.name,
+                email: req.body.email,
+                password: req.body.pass,
+            })
+            res.json(user)
+        }
+        catch(err){
+            console.log(err)
+        }
     }
+
+
 }

@@ -2,8 +2,9 @@ const express = require('express');
 const app = express();
 const passport = require('passport')
 const methodOverride = require('method-override')
-const {createClient} = require('@supabase/supabase-js')
 const session = require('express-session')
+const sequelize = require('./config/database')
+const { Sequelize } = require('sequelize');
 const homeRoutes = require('./routes/home')
 const userRoutes = require('./routes/user')
 const noteRoutes = require('./routes/notes')
@@ -50,7 +51,11 @@ app.use(express.json());
 //     // This client will now send request as this user
 //     const { data } = await supabase.from('users').select()
 //   }
-
+sequelize.authenticate().then(() => {
+    console.log('Connection has been established successfully.');
+ }).catch((error) => {
+    console.error('Unable to connect to the database: ', error);
+ });
 //Method override
 app.use(methodOverride("_method"))
 
