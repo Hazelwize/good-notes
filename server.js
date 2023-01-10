@@ -4,7 +4,6 @@ const passport = require('passport')
 const methodOverride = require('method-override')
 const session = require('express-session')
 const sequelize = require('./config/database')
-const { Sequelize } = require('sequelize');
 const homeRoutes = require('./routes/home')
 const userRoutes = require('./routes/user')
 const noteRoutes = require('./routes/notes')
@@ -20,37 +19,6 @@ app.use(express.static("public"));
 app.use(express.urlencoded({ extended: true}));
 app.use(express.json());
 
-// /**
-// * Make a request from the client to your server function
-// */
-// async function makeApiRequest() {
-//     const token = newClient.session()?.access_token
-  
-//     await fetch('https://example.com/withAuth', {
-//        method: 'GET',
-//        withCredentials: true,
-//        credentials: 'include',
-//        headers: {
-//         'Content-Type': 'application/json',
-//         'Authorization': bearer, // Your own auth
-//         'X-Supabase-Auth': token, // Set the Supabase user
-//        }
-//     })
-//   }
-  
-//   /**
-//   * Use the Auth token in your server-side function.
-//   */
-//   async function apiFunction(req, res) {
-//     const { access_token } = req.get('X-Supabase-Auth')
-  
-//     // You can now use it within a Supabase Client
-//     const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_KEY)
-//     const { user, error } = supabase.auth.setAuth(access_token)
-  
-//     // This client will now send request as this user
-//     const { data } = await supabase.from('users').select()
-//   }
 sequelize.authenticate().then(() => {
     console.log('Connection has been established successfully.');
  }).catch((error) => {
