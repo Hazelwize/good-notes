@@ -1,13 +1,14 @@
+const pool = require('../config/database')
+
 module.exports = {
     getIndex: (req,res) => {
         res.send('notes.html')
     },
     createNote: async(req,res) => {
         try{
-            const { data, error } = await supabase
-            .from('notes')
-            .insert([{ user_id: req.user.id, msg: req.body.msg, likes: 0 },])
-            res.json('Note Created')
+            const msg = await pool.query('INSERT INTO notes (message) VALUES ($1) RETURNING *',[req.body.msg])
+            console.log(msg.rows)
+            res.redirect('/')
         }
         catch(err){
             console.log(err)

@@ -1,5 +1,3 @@
-const User = require('../models/User')
-
 module.exports = {
     getNote: (req,res) => {
         res.send('index.html')
