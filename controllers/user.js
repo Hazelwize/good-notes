@@ -8,6 +8,9 @@ module.exports = {
     createNote: (req,res) => {
         res.send('index.html')
     },
+    getProfile: (req,res) => {
+        console.log(req.user)
+    },
     getUsers: async(req,res) => {
         try{
             console.log(req)
