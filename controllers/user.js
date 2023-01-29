@@ -9,7 +9,8 @@ module.exports = {
         res.send('index.html')
     },
     getProfile: (req,res) => {
-        console.log(req.user)
+        console.log(req.user.name)
+        res.render('profile.ejs',{user: req.user})
     },
     getUsers: async(req,res) => {
         try{

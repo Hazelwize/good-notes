@@ -10,6 +10,8 @@ const noteRoutes = require('./routes/notes')
 const authRoutes = require('./routes/auth')
 const pool = require('./config/database')
 
+
+
 //Use .env file from config folder
 require('dotenv').config({path: './config/.env'})
 
@@ -19,6 +21,9 @@ app.use(express.static("public"));
 //Body Parser
 app.use(express.urlencoded({ extended: true}));
 app.use(express.json());
+
+//VIEW ENGINE
+app.set('view engine', 'ejs');
 
 
 //Method override
@@ -40,6 +45,7 @@ app.use(session({
 app.use(passport.initialize())
 app.use(passport.session())
 
+require('./config/passport')(passport)
 //ROUTES
 app.use('/', homeRoutes);
 app.use('/user', userRoutes);

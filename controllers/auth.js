@@ -1,28 +1,8 @@
 const passport = require("passport");
 const validator = require("validator");
-const pool = require('../config/database');
-const bcrypt = require('bcryptjs')
-const { v4: uuidv4 } = require('uuid');
-// uuidv4(); 
 
-const createUser = async (id, name, email, password) => {
-    const salt = await bcrypt.genSalt(10);
-    const hash = await bcrypt.hash(password, salt);
-    
-    const data = await pool.query(
-    "INSERT INTO users(id, name, email, password) VALUES ($1, $2, $3, $4) RETURNING id, name, email, password",
-    [id, name ,email, hash]
-    );
-    console.log(data)
-    if (data.rowCount == 0) return false;
-    return data.rows[0];
-};
-const emailExists = async (email) => {
-    const data = await pool.query("SELECT * FROM users WHERE email=$1", [email]);
-    console.log(data)
-    if (data.rowCount == 0) return false; 
-    return data.rows[0];
-    };
+
+
 exports.getLogin = (req, res) => {
   if (req.user) {
     return res.redirect("/profile");
@@ -32,37 +12,23 @@ exports.getLogin = (req, res) => {
   });
 };
 
-exports.postLogin = (req, res, next) => {
-  const validationErrors = [];
-  if (!validator.isEmail(req.body.email))
-    validationErrors.push({ msg: "Please enter a valid email address." });
-  if (validator.isEmpty(req.body.password))
-    validationErrors.push({ msg: "Password cannot be blank." });
+exports.postLogin = passport.authenticate("local-login", {session: false}),(req, res, next) => {
+  // const validationErrors = [];
+  // if (!validator.isEmail(req.body.email))
+  //   validationErrors.push({ msg: "Please enter a valid email address." });
+  // if (validator.isEmpty(req.body.password))
+  //   validationErrors.push({ msg: "Password cannot be blank." });
 
-  if (validationErrors.length) {
-    // req.flash("errors", validationErrors);
-    return res.redirect('/');
-  }
-  req.body.email = validator.normalizeEmail(req.body.email, {
-    gmail_remove_dots: false,
-  });
-
-  passport.authenticate("local", (err, user, info) => {
-    if (err) {
-      return next(err);
-    }
-    if (!user) {
-    //   req.flash("errors", info);
-      return res.redirect("/login");
-    }
-    req.logIn(user, (err) => {
-      if (err) {
-        return next(err);
-      }
-    //   req.flash("success", { msg: "Success! You are logged in." });
-      res.redirect(req.session.returnTo || "/profile");
-    });
-  })(req, res, next);
+  // if (validationErrors.length) {
+  //   // req.flash("errors", validationErrors);
+  //   return res.redirect('/');
+  // }
+  // req.body.email = validator.normalizeEmail(req.body.email, {
+  //   gmail_remove_dots: false,
+  // });
+    console.log('rendering')
+    res.json({user: req.user});
+  
 };
 
 exports.logout = (req, res) => {
@@ -105,13 +71,8 @@ exports.postSignup = async (req, res, next) => {
   req.body.email = validator.normalizeEmail(req.body.email, {
     gmail_remove_dots: false,
   });
-  
-  if(await emailExists(req.body.email)){
-    return res.redirect('/')
-  }else{
-    const id = uuidv4();
-    createUser( id, req.body.name, req.body.email, req.body.password)
-    res.redirect('/user/profile')
+  passport.authenticate("local-signup"), (req, res, next) => {
+    res.json({user: req.user});
   }
 //   User.findOne(
 //     { $or: [{ email: req.body.email }, { userName: req.body.userName }] },
