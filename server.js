@@ -1,6 +1,7 @@
 const express = require('express');
 const app = express();
 const passport = require('passport')
+require('./config/passport')(passport)
 const methodOverride = require('method-override')
 const session = require('express-session')
 const pgSession = require('connect-pg-simple')(session);
@@ -45,7 +46,8 @@ app.use(session({
 app.use(passport.initialize())
 app.use(passport.session())
 
-require('./config/passport')(passport)
+
+
 //ROUTES
 app.use('/', homeRoutes);
 app.use('/user', userRoutes);

@@ -1,18 +1,17 @@
-const passport = require("passport");
+const passport = require('passport')
 const validator = require("validator");
-
-
+const {createUser} = require('../config/helper')
 
 exports.getLogin = (req, res) => {
   if (req.user) {
-    return res.redirect("/profile");
+    return res.redirect("/user/profile");
   }
   res.render("login", {
     title: "Login",
   });
 };
 
-exports.postLogin = passport.authenticate("local-login", {session: false}),(req, res, next) => {
+exports.postLogin = 
   // const validationErrors = [];
   // if (!validator.isEmail(req.body.email))
   //   validationErrors.push({ msg: "Please enter a valid email address." });
@@ -20,16 +19,20 @@ exports.postLogin = passport.authenticate("local-login", {session: false}),(req,
   //   validationErrors.push({ msg: "Password cannot be blank." });
 
   // if (validationErrors.length) {
-  //   // req.flash("errors", validationErrors);
-  //   return res.redirect('/');
+  //   return res.redirect("/login");
   // }
   // req.body.email = validator.normalizeEmail(req.body.email, {
   //   gmail_remove_dots: false,
   // });
-    console.log('rendering')
-    res.json({user: req.user});
-  
-};
+  passport.authenticate('login', {
+    failureRedirect: '/',
+    successRedirect: '/user/profile'
+  })
+  // , (req, res) => {
+  //   console.log('rendering profile')
+  //   res.render('profile.ejs', {user: req.user})
+  // };
+
 
 exports.logout = (req, res) => {
   req.logout();
@@ -42,17 +45,15 @@ exports.logout = (req, res) => {
 };
 
 exports.getSignup = (req, res) => {
-    console.log('getting signup')
   if (req.user) {
-    return res.redirect("/profile");
+    return res.redirect("/user/profile");
   }
   res.render("signup", {
     title: "Create Account",
   });
 };
 
-exports.postSignup = async (req, res, next) => {
-    console.log('posting signup')
+exports.postSignup = (req, res, next) => {
   const validationErrors = [];
   if (!validator.isEmail(req.body.email))
     validationErrors.push({ msg: "Please enter a valid email address." });
@@ -64,39 +65,12 @@ exports.postSignup = async (req, res, next) => {
     validationErrors.push({ msg: "Passwords do not match" });
 
   if (validationErrors.length) {
-    // req.flash("errors", validationErrors);
-    console.log(validationErrors)
+    req.flash("errors", validationErrors);
     return res.redirect("../signup");
   }
   req.body.email = validator.normalizeEmail(req.body.email, {
     gmail_remove_dots: false,
   });
-  passport.authenticate("local-signup"), (req, res, next) => {
-    res.json({user: req.user});
-  }
-//   User.findOne(
-//     { $or: [{ email: req.body.email }, { userName: req.body.userName }] },
-//     (err, existingUser) => {
-//       if (err) {
-//         return next(err);
-//       }
-//       if (existingUser) {
-//         req.flash("errors", {
-//           msg: "Account with that email address or username already exists.",
-//         });
-//         return res.redirect("../signup");
-//       }
-//       user.save((err) => {
-//         if (err) {
-//           return next(err);
-//         }
-//         req.logIn(user, (err) => {
-//           if (err) {
-//             return next(err);
-//           }
-//           res.redirect("/profile");
-//         });
-//       });
-//     }
-//   );
+
+  createUser(req.body.name,req.body.email,req.body.password)
 };

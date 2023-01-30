@@ -12,5 +12,5 @@ module.exports = {
       } else {
         res.redirect("/dashboard");
       }
-    },
+    }
   };
