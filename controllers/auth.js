@@ -10,23 +10,24 @@ exports.getLogin = (req, res) => {
   });
 };
 
-exports.postLogin = 
-  // const validationErrors = [];
-  // if (!validator.isEmail(req.body.email))
-  //   validationErrors.push({ msg: "Please enter a valid email address." });
-  // if (validator.isEmpty(req.body.password))
-  //   validationErrors.push({ msg: "Password cannot be blank." });
+exports.postLogin = (req, res) => {
+  const validationErrors = [];
+  if (!validator.isEmail(req.body.email))
+    validationErrors.push({ msg: "Please enter a valid email address." });
+  if (validator.isEmpty(req.body.password))
+    validationErrors.push({ msg: "Password cannot be blank." });
 
-  // if (validationErrors.length) {
-  //   return res.redirect("/login");
-  // }
-  // req.body.email = validator.normalizeEmail(req.body.email, {
-  //   gmail_remove_dots: false,
-  // });
+  if (validationErrors.length) {
+    return res.redirect("/login");
+  }
+  req.body.email = validator.normalizeEmail(req.body.email, {
+    gmail_remove_dots: false,
+  });
   passport.authenticate('login', {
     failureRedirect: '/',
-    successRedirect: '/user/profile'
-  })
+    // successRedirect: '/user/profile'
+  })(req,res)
+} 
   // , (req, res) => {
   //   console.log('rendering profile')
   //   res.render('profile.ejs', {user: req.user})
@@ -54,32 +55,32 @@ exports.getSignup = (req, res) => {
   });
 };
 
-exports.postSignup = 
-  // const validationErrors = [];
-  // if (!validator.isEmail(req.body.email))
-  //   validationErrors.push({ msg: "Please enter a valid email address." });
-  // if (!validator.isLength(req.body.password, { min: 8 }))
-  //   validationErrors.push({
-  //     msg: "Password must be at least 8 characters long",
-  //   });
-  // if (req.body.password !== req.body.confirmPassword)
-  //   validationErrors.push({ msg: "Passwords do not match" });
+exports.postSignup = (req, res, next) => {
+  const validationErrors = [];
+  if (!validator.isEmail(req.body.email))
+    validationErrors.push({ msg: "Please enter a valid email address." });
+  if (!validator.isLength(req.body.password, { min: 8 }))
+    validationErrors.push({
+      msg: "Password must be at least 8 characters long",
+    });
+  if (req.body.password !== req.body.passConf)
+    validationErrors.push({ msg: "Passwords do not match" });
 
-  // if (validationErrors.length) {
-  //   req.flash("errors", validationErrors);
-  //   return res.redirect("../signup");
-  // }
-  // req.body.email = validator.normalizeEmail(req.body.email, {
-  //   gmail_remove_dots: false,
-  // });
-
+  if (validationErrors.length) {
+   console.log(validationErrors)
+    return res.redirect("../signup");
+  }
+  req.body.email = validator.normalizeEmail(req.body.email, {
+    gmail_remove_dots: false,
+  });
   passport.authenticate('signup', {
     failureRedirect: '/',
     successRedirect: '/user/profile'
-  });
+  })(req,res);
+}
 
-  exports.updatePass = 
-    passport.authenticate("updatePassword", {
-      failureRedirect: '/',
-      successRedirect: '/user/profile'
-    });
+exports.updatePass = 
+  passport.authenticate("updatePassword", {
+    failureRedirect: '/',
+    successRedirect: '/user/profile'
+  });
